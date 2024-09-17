@@ -56,7 +56,7 @@
     ],
     "testEnvironment": "node"
   },
-  "repository": "git@github.com:algorandfoundation/bip32-ed25519-ts.git",
+  "repository": "git@github.com:hashmapsdata2value/xHD-Wallet-API-ts.git",
   "files": [
     "dist",
     "README.md",
