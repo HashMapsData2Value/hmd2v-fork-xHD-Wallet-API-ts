@@ -1,3 +1,10 @@
+# [1.0.0-canary.2](https://github.com/hashmapsdata2value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.0.0-canary.1...v1.0.0-canary.2) (2024-09-19)
+
+
+### Bug Fixes
+
+* package name ([8aca9b4](https://github.com/hashmapsdata2value/hmd2v-fork-xHD-Wallet-API-ts/commit/8aca9b476da0dd65fcfbeb127590ae7e61bcd5e1))
+
 # 1.0.0-canary.1 (2024-09-17)
 
 
