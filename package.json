@@ -1,5 +1,5 @@
 {
-  "name": "xhd-wallet-api",
+  "name": "hmd2v-fork-xhd-wallet-api",
   "version": "1.0.0-canary.1",
   "description": "A Typescript implementation of BIP-32 Ed25519 for Algorand ARC-52.",
   "main": "dist/index.js",
@@ -56,7 +56,7 @@
     ],
     "testEnvironment": "node"
   },
-  "repository": "git@github.com:hashmapsdata2value/xHD-Wallet-API-ts.git",
+  "repository": "git@github.com:hashmapsdata2value/hmd2v-fork-xHD-Wallet-API-ts.git",
   "files": [
     "dist",
     "README.md",
