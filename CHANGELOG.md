@@ -1,3 +1,10 @@
+## [1.1.1-canary.3](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.1.1-canary.2...v1.1.1-canary.3) (2024-10-02)
+
+
+### Bug Fixes
+
+* fixes tsc-alias command ([bae78e4](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/commit/bae78e49c641c4e9341930eaa63f17134a15fadb))
+
 ## [1.1.1-canary.2](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.1.1-canary.1...v1.1.1-canary.2) (2024-10-02)
 
 
