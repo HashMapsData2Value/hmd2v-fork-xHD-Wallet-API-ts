@@ -52,7 +52,7 @@ export function fromSeed(seed: Buffer): Uint8Array {
  * @param g - The number of bits to zero
  * @returns - The array with the last g bits set to zero
  */
-export function trunc_256_minus_g_bits(array: Uint8Array, g: number): Uint8Array {
+function trunc_256_minus_g_bits(array: Uint8Array, g: number): Uint8Array {
   if (g < 0 || g > 256) {
     throw new Error("Number of bits to zero must be between 0 and 256.");
   }
