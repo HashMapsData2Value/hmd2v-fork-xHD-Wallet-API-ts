@@ -1,6 +1,6 @@
 {
   "name": "hmd2v-fork-xhd-wallet-api",
-  "version": "1.1.0-canary.1",
+  "version": "1.1.0",
   "description": "A Typescript implementation of Algorand ARC-52 extended hierarchical determinstic wallets.",
   "exports": {
     ".": {

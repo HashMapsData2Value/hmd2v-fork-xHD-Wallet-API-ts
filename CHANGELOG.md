@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.0.0...v1.1.0) (2024-10-02)
+
+
+### Features
+
+* update to lib and separate types path ([e342d92](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/commit/e342d92c1b1dbdbd1d6d64ebe0a1100e9144f920))
+
 # [1.1.0-canary.1](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.0.0...v1.1.0-canary.1) (2024-10-02)
 
 
