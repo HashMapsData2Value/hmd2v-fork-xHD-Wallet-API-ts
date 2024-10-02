@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.1.0...v1.1.1) (2024-10-02)
+
+
+### Bug Fixes
+
+* explicitly export ([ded591b](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/commit/ded591b14ab275e399f5f8c8b139ae81b9f94123))
+* fixes lack of lib folder ([b1a609b](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/commit/b1a609bda1def7e25be7c099d5bd9f86aa15d5d9))
+* fixes tsc-alias command ([bae78e4](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/commit/bae78e49c641c4e9341930eaa63f17134a15fadb))
+
 ## [1.1.1-canary.3](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.1.1-canary.2...v1.1.1-canary.3) (2024-10-02)
 
 
