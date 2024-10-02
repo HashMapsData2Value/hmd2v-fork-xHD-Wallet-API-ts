@@ -1,3 +1,10 @@
+## [1.1.1-canary.2](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.1.1-canary.1...v1.1.1-canary.2) (2024-10-02)
+
+
+### Bug Fixes
+
+* explicitly export ([ded591b](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/commit/ded591b14ab275e399f5f8c8b139ae81b9f94123))
+
 ## [1.1.1-canary.1](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.1.0...v1.1.1-canary.1) (2024-10-02)
 
 
