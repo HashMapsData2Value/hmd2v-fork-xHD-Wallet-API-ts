@@ -1,3 +1,10 @@
+## [1.1.1-canary.1](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.1.0...v1.1.1-canary.1) (2024-10-02)
+
+
+### Bug Fixes
+
+* fixes lack of lib folder ([b1a609b](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/commit/b1a609bda1def7e25be7c099d5bd9f86aa15d5d9))
+
 # [1.1.0](https://github.com/HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts/compare/v1.0.0...v1.1.0) (2024-10-02)
 
 
