@@ -74,7 +74,7 @@
   },
   "repository": "git@github.com:HashMapsData2Value/hmd2v-fork-xHD-Wallet-API-ts.git",
   "files": [
-    "dist",
+    "lib/**/*",
     "README.md",
     "LICENSE"
   ],
