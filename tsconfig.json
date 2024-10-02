@@ -1,16 +1,16 @@
 {
+  "include": ["./src/**/*.ts"],
+  "exclude": ["**/*.test.ts", "**/*.spec.ts"],
   "compilerOptions": {
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "ignoreDeprecations": "5.0",
-    "isolatedModules": true,
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "declaration": true,
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "target": "ES2022",
-  }
+      "target": "ESNext",
+      "module": "ESNext",
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "outDir": "./lib",
+      "moduleResolution": "node", 
+      "declaration": true,
+      "declarationDir": "./lib/types"
+  },
+  
 }
