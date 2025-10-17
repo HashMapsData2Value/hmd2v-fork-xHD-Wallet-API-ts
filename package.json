@@ -1,7 +1,7 @@
 {
-  "name": "@algorandfoundation/xhd-wallet-api",
-  "version": "1.0.3",
-  "description": "A Typescript implementation of Algorand ARC-52 extended hierarchical determinstic wallets.",
+  "name": "hmd2v-xhd-wallet-api",
+  "version": "0.0.1",
+  "description": "A Typescript implementation of Algorand ARC-52 extended hierarchical deterministic wallets. Forked and maintained by HashMapsData2Value.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -11,7 +11,7 @@
     "test:cov": "tsc && tsc-alias -p tsconfig.json -f && node --experimental-vm-modules node_modules/.bin/jest --coverage"
   },
   "keywords": [],
-  "author": "Algorand Foundation",
+  "author": "HashMapsData2Value",
   "license": "Apache-2.0",
   "devDependencies": {
     "@scure/bip39": "^2.0.0",
@@ -55,7 +55,7 @@
       "optional": true
     }
   },
-  "repository": "git@github.com:algorandfoundation/xHD-Wallet-API-ts.git",
+  "repository": "git@github.com:HashMapsData2Value/hmd2v-xHD-Wallet-API-ts.git",
   "files": [
     "dist",
     "README.md",
@@ -85,11 +85,7 @@
       ]
     ],
     "branches": [
-      "release/*",
-      {
-        "name": "main",
-        "prerelease": "canary"
-      }
+      "npm"
     ]
   },
   "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
