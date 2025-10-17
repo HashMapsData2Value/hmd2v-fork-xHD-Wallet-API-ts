@@ -20,6 +20,10 @@ coverage
 # Visual Studio Code configuration
 .vscode/
 
+# Yarn Berry (v2+) files
+.yarn/
+.yarnrc.yml
+
 
 # npm and yarn debug logs
 npm-debug.log*

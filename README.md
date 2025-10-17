@@ -1,48 +1,124 @@
+
 # xHD Wallet API Typescript
 
-Typescript implementation of BIP32-Ed25519 Hierarchical Deterministic Keys over a Non-linear Keyspace for Algorand's ARC-52
+Typescript implementation of BIP32-Ed25519 Hierarchical Deterministic Keys over a Non-linear Keyspace for Algorand's ARC-52 ([BIP32-ed25519 spec](https://acrobat.adobe.com/id/urn:aaid:sc:EU:04fe29b0-ea1a-478b-a886-9bb558a5242a)).
 
-The implementation is based on the [BIP32-ed25519](https://acrobat.adobe.com/id/urn:aaid:sc:EU:04fe29b0-ea1a-478b-a886-9bb558a5242a) specification.
+---
 
-## Variants
+## Installation
 
-It offers 2 modes to derive keys.
-
-- Khovratovich; Standard mode according to the paper above.
-- Peikert's: Ammendment to the standard mode to allow for a more secure derivation of keys by giving more entropy to `zL`. This is the **default** mode of this library
-
-## Sensitive Data
-
-Instances of the `XHDWalletAPI` class do not persist sensitive data. However, many methods of the class require the `rootKey` be passed as a parameter. The responsibility of handling the `seed` and derived `rootKey` in a secure manner is on the developer of the consuming application. Variables used to hold these sensitive values should be zeroed as soon as they are no longer needed.
-
-```ts
-async function example() {
-  const seed = getSeed();
-  const rootKey = fromSeed(seed);
-  const cryptoService = new XHDWalletAPI();
-  const key = await cryptoService.keyGen(rootKey, KeyContext.Address, 0, 0);
-}
+```bash
+yarn add @algorandfoundation/xhd-wallet-api
 ```
 
-## Run
+### React Native
+For React Native, install required polyfills:
 
-```shell
-$ yarn
-$ yarn test
+```bash
+yarn add react-native-bigint react-native-get-random-values
 ```
+At the top of your app:
+```js
+import '@algorandfoundation/xhd-wallet-api/polyfills';
+```
+See [REACT_NATIVE.md](./REACT_NATIVE.md) for full details.
 
-## Regarding CJS
+---
 
-This library can be used in a CommonJS environment as a dynamic import:
+## Usage
+
+### 1. Initialize
 
 ```ts
+import { XHDWalletAPI, fromSeed, KeyContext } from '@algorandfoundation/xhd-wallet-api';
+
+const cryptoService = new XHDWalletAPI();
+const seed = getSeed(); // Your secure seed-retrieval API
+const rootKey = cryptoService.fromSeed(seed);
+seed.fill(0); // Zero out the seed after it has been used
+// ... use rootKey
+rootKey.fill(0); // Zero out the rootKey after it has been used
+```
+
+### 2. Generate Public Key (BIP44 path)
+
+```ts
+const pk = await cryptoService.keyGen(rootKey, KeyContext.Address, 0, 0);
+```
+`KeyContext.Address` is Algorand's cointype `283'`. Use `KeyContext.Identity` for identity keys (`0'`).
+
+### 3. Sign Algorand Transactions
+
+```ts
+const prefixEncodedTx = new Uint8Array(/* ... */); // Algorand SDK-encoded tx
+const signature = await cryptoService.signAlgoTransaction(
+  KeyContext.Address, 0, 0, 0, prefixEncodedTx
+);
+const isValid = await cryptoService.verifyWithPublicKey(signature, prefixEncodedTx, pk);
+```
+
+### 4. Sign Arbitrary Data
+
+```ts
+const challenge = new Uint8Array(32); // e.g. random challenge
+const metadata = { encoding: Encoding.BASE64, schema: authSchema };
+const encoded = /* encode challenge as needed */;
+const signature = await cryptoService.signData(
+  rootKey, KeyContext.Address, 0, 0, encoded, metadata
+);
+const isValid = await cryptoService.verifyWithPublicKey(
+  signature, encoded, await cryptoService.keyGen(rootKey, KeyContext.Address, 0, 0)
+);
+```
+
+### 5. ECDH (Shared Secret)
+
+```ts
+// On Alice's end
+const sharedSecret = await cryptoService.ECDH(
+  aliceRootKey, KeyContext.Identity, 0, 0, bobPublicKey, true
+);
+// On Bob's end:
+const sharedSecretBob = await cryptoService.ECDH(
+  bobRootKey, KeyContext.Identity, 0, 0, alicePublicKey, false
+);
+```
+
+### 6. Derive Child Public Keys
+
+```ts
+const xPk = await cryptoService.deriveKey(
+  rootKey, [harden(44), harden(283), harden(0), 0], false, BIP32DerivationType.Peikert
+);
+const derivedKey = await deriveChildNodePublic(xPk, 1);
+const pk = derivedKey.slice(0, 32); // 32-byte public key
+```
+
+---
+
+## API
+
+- `fromSeed(seed: Uint8Array): Uint8Array` — Generate root key from seed
+- `keyGen(rootKey, context, account, change): Uint8Array` — Derive public key
+- `signAlgoTransaction(context, account, change, keyIndex, tx): Uint8Array` — Sign Algorand tx
+- `signData(rootKey, context, account, change, data, metadata): Uint8Array` — Sign arbitrary data
+- `verifyWithPublicKey(signature, data, pk): boolean` — Verify signature
+- `ECDH(rootKey, context, account, change, otherPk, meFirst): Uint8Array` — Shared secret
+- `deriveKey(rootKey, path, isPrivate, type): Uint8Array` — Derive extended key
+- `deriveChildNodePublic(xpk, index): Uint8Array` — Derive child public key
+
+---
+
+## CJS / Node.js Usage
+
+This library can be used in CommonJS via dynamic import:
+
+```js
 ;(async function () {
   const hd = await import("@algorandfoundation/xhd-wallet-api");
 })();
 ```
-
-Make sure to set your tsconfig.json so it is at least:
-
+Set your `tsconfig.json`:
 ```json
 {
   "target": "es2020",

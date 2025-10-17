@@ -11,6 +11,7 @@ import {
 } from './sumo.facade.js';
 import * as msgpack from "algo-msgpack-with-bigint"
 import Ajv from "ajv"
+import { concatUint8Arrays, stringToUint8Array, uint8ArrayToString, base64ToUint8Array } from './utils.js';
 //@ts-expect-error, we handle this with ts-alias
 import { deriveChildNodePrivate } from './bip32-ed25519';
 
@@ -49,7 +50,7 @@ export interface SignMetadata {
 
 export const harden = (num: number): number => 0x80_00_00_00 + num;
 
-function GetBIP44PathFromContext(context: KeyContext, account:number, key_index: number): number[] {
+function GetBIP44PathFromContext(context: KeyContext, account: number, key_index: number): number[] {
     switch (context) {
         case KeyContext.Address:
             return [harden(44), harden(283), harden(account), 0, key_index]
@@ -65,7 +66,7 @@ export const ERROR_TAGS_FOUND: Error = Error("Transactions tags found")
 
 export class XHDWalletAPI {
 
-    constructor() {}
+    constructor() { }
 
     /**
      * Derives a child key from the root key based on BIP44 path
@@ -87,7 +88,7 @@ export class XHDWalletAPI {
 
         // extended public key
         // [public] [nodeCC]
-        return new Uint8Array(Buffer.concat([crypto_scalarmult_ed25519_base_noclamp(rootKey.subarray(0, 32)), rootKey.subarray(64, 96)]))
+        return concatUint8Arrays([crypto_scalarmult_ed25519_base_noclamp(rootKey.subarray(0, 32)), rootKey.subarray(64, 96)])
     }
 
     /**
@@ -98,7 +99,7 @@ export class XHDWalletAPI {
      * @param keyIndex - key index. This value will be a SOFT derivation as part of BIP44.
      * @returns - public key 32 bytes
      */
-    async keyGen(rootKey: Uint8Array, context: KeyContext, account:number, keyIndex: number, derivationType: BIP32DerivationType = BIP32DerivationType.Peikert): Promise<Uint8Array> {
+    async keyGen(rootKey: Uint8Array, context: KeyContext, account: number, keyIndex: number, derivationType: BIP32DerivationType = BIP32DerivationType.Peikert): Promise<Uint8Array> {
         const bip44Path: number[] = GetBIP44PathFromContext(context, account, keyIndex)
 
         const extendedKey: Uint8Array = await this.deriveKey(rootKey, bip44Path, false, derivationType)
@@ -130,18 +131,18 @@ export class XHDWalletAPI {
         const publicKey = crypto_scalarmult_ed25519_base_noclamp(scalar);
 
         // \(2): h = hash(c || msg) mod q
-        const r = crypto_core_ed25519_scalar_reduce(crypto_hash_sha512(Buffer.concat([kR, data])))
+        const r = crypto_core_ed25519_scalar_reduce(crypto_hash_sha512(concatUint8Arrays([kR, data])))
 
         // \(4):  R = r * G (base point, no clamp)
         const R = crypto_scalarmult_ed25519_base_noclamp(r)
 
         // h = hash(R || pubKey || msg) mod q
-        let h = crypto_core_ed25519_scalar_reduce(crypto_hash_sha512(Buffer.concat([R, publicKey, data])));
+        let h = crypto_core_ed25519_scalar_reduce(crypto_hash_sha512(concatUint8Arrays([R, publicKey, data])));
 
         // \(5): S = (r + h * k) mod q
         const S = crypto_core_ed25519_scalar_add(r, crypto_core_ed25519_scalar_mul(h, scalar))
 
-        return Buffer.concat([R, S]);
+        return concatUint8Arrays([R, S]);
     }
 
     /**
@@ -194,7 +195,7 @@ export class XHDWalletAPI {
     async signAlgoTransaction(rootKey: Uint8Array, context: KeyContext, account: number, keyIndex: number, prefixEncodedTx: Uint8Array, derivationType: BIP32DerivationType = BIP32DerivationType.Peikert): Promise<Uint8Array> {
         const bip44Path: number[] = GetBIP44PathFromContext(context, account, keyIndex)
 
-        const sig =  await this.rawSign(rootKey, bip44Path, prefixEncodedTx, derivationType)
+        const sig = await this.rawSign(rootKey, bip44Path, prefixEncodedTx, derivationType)
 
         return sig
     }
@@ -218,7 +219,7 @@ export class XHDWalletAPI {
         let decoded: Uint8Array
         switch (metadata.encoding) {
             case Encoding.BASE64:
-                decoded = new Uint8Array(Buffer.from(Buffer.from(message).toString(), 'base64'))
+                decoded = base64ToUint8Array(uint8ArrayToString(message))
                 break
             case Encoding.MSGPACK:
                 decoded = msgpack.decode<Uint8Array>(message) as Uint8Array
@@ -234,11 +235,13 @@ export class XHDWalletAPI {
         // validate with schema
         //@ts-expect-error, this is constructable
         const ajv = new Ajv()
-		const validate = ajv.compile(metadata.schema)
+        const validate = ajv.compile(metadata.schema)
 
         const valid = validate(decoded)
 
-        if (!valid) console.log(ajv.errors)
+        if (!valid && ajv.errors) {
+            console.log('Validation errors:', ajv.errors)
+        }
 
         return valid
     }
@@ -255,12 +258,12 @@ export class XHDWalletAPI {
         // Prefixes taken from go-algorand node software code
         // https://github.com/algorand/go-algorand/blob/master/protocol/hash.go
         const prefixes: string[] = [
-            "appID","arc","aB","aD","aO","aP","aS","AS","B256","BH","BR","CR","GE","KP","MA","MB",
-            "MX","NIC","NIR","NIV","NPR","OT1","OT2","PF","PL","Program","ProgData","PS","PK","SD",
-            "SpecialAddr","STIB","spc","spm","spp","sps","spv","TE","TG","TL","TX","VO"
+            "appID", "arc", "aB", "aD", "aO", "aP", "aS", "AS", "B256", "BH", "BR", "CR", "GE", "KP", "MA", "MB",
+            "MX", "NIC", "NIR", "NIV", "NPR", "OT1", "OT2", "PF", "PL", "Program", "ProgData", "PS", "PK", "SD",
+            "SpecialAddr", "STIB", "spc", "spm", "spp", "sps", "spv", "TE", "TG", "TL", "TX", "VO"
         ]
         for (const prefix of prefixes) {
-            if (Buffer.from(message.subarray(0, prefix.length)).toString("ascii") === prefix) {
+            if (uint8ArrayToString(message.subarray(0, prefix.length), 'ascii') === prefix) {
                 return true
             }
         }
@@ -317,9 +320,9 @@ export class XHDWalletAPI {
 
         let concatenation: Uint8Array
         if (meFirst) {
-            concatenation = Buffer.concat([sharedPoint, ourPubCurve25519, otherPartyPubCurve25519])
+            concatenation = concatUint8Arrays([sharedPoint, ourPubCurve25519, otherPartyPubCurve25519])
         } else {
-            concatenation = Buffer.concat([sharedPoint, otherPartyPubCurve25519, ourPubCurve25519])
+            concatenation = concatUint8Arrays([sharedPoint, otherPartyPubCurve25519, ourPubCurve25519])
 
         }
 
