@@ -26,7 +26,6 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-
       - uses: actions/checkout@v3
 
       # semantic-release needs node 20
