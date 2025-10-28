@@ -39,7 +39,7 @@ const crypto_generichash_BYTES_MAX = 64;
 export function crypto_sign_verify_detached(
   signature: Uint8Array,
   message: Uint8Array,
-  publicKey: Uint8Array
+  publicKey: Uint8Array,
 ): boolean {
   try {
     return ed25519.verify(signature, message, publicKey);
@@ -75,12 +75,12 @@ export function crypto_sign_keypair(): KeyPair {
  * Scalar multiplication with base point (no clamping)
  */
 export function crypto_scalarmult_ed25519_base_noclamp(
-  scalar: Uint8Array
+  scalar: Uint8Array,
 ): Uint8Array {
   // Input validation - only validate length
   if (scalar.length !== crypto_scalarmult_ed25519_SCALARBYTES) {
     throw new Error(
-      `scalar must be ${crypto_scalarmult_ed25519_SCALARBYTES} bytes`
+      `scalar must be ${crypto_scalarmult_ed25519_SCALARBYTES} bytes`,
     );
   }
 
@@ -124,7 +124,7 @@ export function crypto_scalarmult_ed25519_base_noclamp(
  */
 export function crypto_core_ed25519_add(
   pointA: Uint8Array,
-  pointB: Uint8Array
+  pointB: Uint8Array,
 ): Uint8Array {
   try {
     const a = ed25519.Point.fromBytes(pointA);
@@ -145,9 +145,8 @@ export function crypto_core_ed25519_add(
  */
 export function crypto_core_ed25519_scalar_add(
   scalarA: Uint8Array,
-  scalarB: Uint8Array
+  scalarB: Uint8Array,
 ): Uint8Array {
-
   // Convert little-endian bytes to bigint
   const a = bytesToNumberLE(scalarA);
   const b = bytesToNumberLE(scalarB);
@@ -162,9 +161,8 @@ export function crypto_core_ed25519_scalar_add(
  */
 export function crypto_core_ed25519_scalar_mul(
   scalarA: Uint8Array,
-  scalarB: Uint8Array
+  scalarB: Uint8Array,
 ): Uint8Array {
-
   const a = bytesToNumberLE(scalarA);
   const b = bytesToNumberLE(scalarB);
   const result = mod(a * b, ed25519.Point.Fn.ORDER);
@@ -176,7 +174,7 @@ export function crypto_core_ed25519_scalar_mul(
  * Reduce a scalar modulo the curve order
  */
 export function crypto_core_ed25519_scalar_reduce(
-  scalar: Uint8Array
+  scalar: Uint8Array,
 ): Uint8Array {
   // crypto_core_ed25519_scalar_reduce can handle inputs of any size, commonly 64 bytes from hash output
   // No length validation needed, matches libsodium behavior
@@ -196,7 +194,7 @@ export function crypto_core_ed25519_scalar_reduce(
  */
 export function crypto_scalarmult(
   privateKey: Uint8Array,
-  publicKey: Uint8Array
+  publicKey: Uint8Array,
 ): Uint8Array {
   return x25519.getSharedSecret(privateKey, publicKey);
 }
@@ -205,7 +203,7 @@ export function crypto_scalarmult(
  * Convert Ed25519 public key to X25519 public key
  */
 export function crypto_sign_ed25519_pk_to_curve25519(
-  edPubKey: Uint8Array
+  edPubKey: Uint8Array,
 ): Uint8Array {
   return ed25519.utils.toMontgomery(edPubKey);
 }
@@ -214,7 +212,7 @@ export function crypto_sign_ed25519_pk_to_curve25519(
  * Convert Ed25519 private key to X25519 private key
  */
 export function crypto_sign_ed25519_sk_to_curve25519(
-  edPrivKey: Uint8Array
+  edPrivKey: Uint8Array,
 ): Uint8Array {
   // Extract just the seed (first 32 bytes) since edwardsToMontgomeryPriv expects 32 bytes
   const seed = edPrivKey.slice(0, 32);
@@ -239,7 +237,7 @@ export function crypto_hash_sha512(message: Uint8Array): Uint8Array {
 export function crypto_generichash(
   outputLength: number,
   message: Uint8Array,
-  key: Uint8Array | null = null
+  key: Uint8Array | null = null,
 ): Uint8Array {
   // Input validation
   if (
@@ -247,7 +245,7 @@ export function crypto_generichash(
     outputLength > crypto_generichash_BYTES_MAX
   ) {
     throw new Error(
-      `output length must be between ${crypto_generichash_BYTES_MIN} and ${crypto_generichash_BYTES_MAX} bytes`
+      `output length must be between ${crypto_generichash_BYTES_MIN} and ${crypto_generichash_BYTES_MAX} bytes`,
     );
   }
 
@@ -267,9 +265,8 @@ export function crypto_generichash(
 export function crypto_kx_client_session_keys(
   clientPub: Uint8Array,
   clientPriv: Uint8Array,
-  serverPub: Uint8Array
+  serverPub: Uint8Array,
 ): CryptoKX {
-
   // Step 1: Perform X25519 ECDH to get shared secret
   const sharedSecret = x25519.getSharedSecret(clientPriv, serverPub);
 
@@ -299,9 +296,8 @@ export function crypto_kx_client_session_keys(
 export function crypto_kx_server_session_keys(
   serverPub: Uint8Array,
   serverPriv: Uint8Array,
-  clientPub: Uint8Array
+  clientPub: Uint8Array,
 ): CryptoKX {
-
   // Step 1: Perform X25519 ECDH to get shared secret
   const sharedSecret = x25519.getSharedSecret(serverPriv, clientPub);
 
@@ -335,7 +331,7 @@ export function crypto_kx_server_session_keys(
 export function crypto_secretbox_easy(
   message: Uint8Array,
   nonce: Uint8Array,
-  key: Uint8Array
+  key: Uint8Array,
 ): Uint8Array {
   // Encrypt the message using XSalsa20Poly1305
   const encrypted = xsalsa20poly1305(key, nonce).encrypt(message);
@@ -349,7 +345,7 @@ export function crypto_secretbox_easy(
 export function crypto_secretbox_open_easy(
   ciphertext: Uint8Array,
   nonce: Uint8Array,
-  key: Uint8Array
+  key: Uint8Array,
 ): Uint8Array {
   try {
     // Decrypt the message using XSalsa20Poly1305

@@ -82,7 +82,7 @@ describe("Sumo Facade Functionality", () => {
     it("should convert Ed25519 private keys to X25519", () => {
       const keyPair = crypto_sign_keypair();
       const x25519Priv = crypto_sign_ed25519_sk_to_curve25519(
-        keyPair.privateKey
+        keyPair.privateKey,
       );
 
       expect(x25519Priv).toBeInstanceOf(Uint8Array);
@@ -107,10 +107,10 @@ describe("Sumo Facade Functionality", () => {
 
       // Convert multiple times - should be identical
       const x25519Pub1 = crypto_sign_ed25519_pk_to_curve25519(
-        keyPair.publicKey
+        keyPair.publicKey,
       );
       const x25519Pub2 = crypto_sign_ed25519_pk_to_curve25519(
-        keyPair.publicKey
+        keyPair.publicKey,
       );
 
       expect(x25519Pub1).toEqual(x25519Pub2);
@@ -124,25 +124,25 @@ describe("Sumo Facade Functionality", () => {
       const bob = crypto_sign_keypair();
 
       const aliceX25519Pub = crypto_sign_ed25519_pk_to_curve25519(
-        alice.publicKey
+        alice.publicKey,
       );
       const aliceX25519Priv = crypto_sign_ed25519_sk_to_curve25519(
-        alice.privateKey
+        alice.privateKey,
       );
       const bobX25519Pub = crypto_sign_ed25519_pk_to_curve25519(bob.publicKey);
       const bobX25519Priv = crypto_sign_ed25519_sk_to_curve25519(
-        bob.privateKey
+        bob.privateKey,
       );
 
       const aliceSession = crypto_kx_client_session_keys(
         aliceX25519Pub,
         aliceX25519Priv,
-        bobX25519Pub
+        bobX25519Pub,
       );
       const bobSession = crypto_kx_server_session_keys(
         bobX25519Pub,
         bobX25519Priv,
-        aliceX25519Pub
+        aliceX25519Pub,
       );
 
       // Alice's RX should equal Bob's TX and vice versa
@@ -166,7 +166,7 @@ describe("Sumo Facade Functionality", () => {
         const result1 = crypto_kx_client_session_keys(
           invalidKey,
           validKey,
-          validKey
+          validKey,
         );
         expect(result1.sharedRx).toBeInstanceOf(Uint8Array);
         expect(result1.sharedTx).toBeInstanceOf(Uint8Array);
@@ -178,7 +178,7 @@ describe("Sumo Facade Functionality", () => {
         const result2 = crypto_kx_server_session_keys(
           validKey,
           invalidKey,
-          validKey
+          validKey,
         );
         expect(result2.sharedRx).toBeInstanceOf(Uint8Array);
         expect(result2.sharedTx).toBeInstanceOf(Uint8Array);
@@ -192,7 +192,11 @@ describe("Sumo Facade Functionality", () => {
       const shortKey = new Uint8Array(31);
       const longKey = new Uint8Array(33);
 
-      const result = crypto_kx_client_session_keys(shortKey, validKey, validKey);
+      const result = crypto_kx_client_session_keys(
+        shortKey,
+        validKey,
+        validKey,
+      );
       expect(result.sharedRx).toBeInstanceOf(Uint8Array);
       expect(result.sharedTx).toBeInstanceOf(Uint8Array);
 
@@ -210,7 +214,11 @@ describe("Sumo Facade Functionality", () => {
       const shortKey = new Uint8Array(31);
       const longKey = new Uint8Array(33);
 
-      const result1 = crypto_kx_server_session_keys(shortKey, validKey, validKey);
+      const result1 = crypto_kx_server_session_keys(
+        shortKey,
+        validKey,
+        validKey,
+      );
       expect(result1.sharedRx).toBeInstanceOf(Uint8Array);
       expect(result1.sharedTx).toBeInstanceOf(Uint8Array);
 
@@ -228,14 +236,30 @@ describe("Sumo Facade Functionality", () => {
       const alice2 = crypto_sign_keypair();
       const bob = crypto_sign_keypair();
 
-      const alice1X25519Pub = crypto_sign_ed25519_pk_to_curve25519(alice1.publicKey);
-      const alice1X25519Priv = crypto_sign_ed25519_sk_to_curve25519(alice1.privateKey);
-      const alice2X25519Pub = crypto_sign_ed25519_pk_to_curve25519(alice2.publicKey);
-      const alice2X25519Priv = crypto_sign_ed25519_sk_to_curve25519(alice2.privateKey);
+      const alice1X25519Pub = crypto_sign_ed25519_pk_to_curve25519(
+        alice1.publicKey,
+      );
+      const alice1X25519Priv = crypto_sign_ed25519_sk_to_curve25519(
+        alice1.privateKey,
+      );
+      const alice2X25519Pub = crypto_sign_ed25519_pk_to_curve25519(
+        alice2.publicKey,
+      );
+      const alice2X25519Priv = crypto_sign_ed25519_sk_to_curve25519(
+        alice2.privateKey,
+      );
       const bobX25519Pub = crypto_sign_ed25519_pk_to_curve25519(bob.publicKey);
 
-      const session1 = crypto_kx_client_session_keys(alice1X25519Pub, alice1X25519Priv, bobX25519Pub);
-      const session2 = crypto_kx_client_session_keys(alice2X25519Pub, alice2X25519Priv, bobX25519Pub);
+      const session1 = crypto_kx_client_session_keys(
+        alice1X25519Pub,
+        alice1X25519Priv,
+        bobX25519Pub,
+      );
+      const session2 = crypto_kx_client_session_keys(
+        alice2X25519Pub,
+        alice2X25519Priv,
+        bobX25519Pub,
+      );
 
       expect(session1.sharedRx).not.toEqual(session2.sharedRx);
       expect(session1.sharedTx).not.toEqual(session2.sharedTx);
@@ -246,14 +270,32 @@ describe("Sumo Facade Functionality", () => {
       const bob1 = crypto_sign_keypair();
       const bob2 = crypto_sign_keypair();
 
-      const aliceX25519Pub = crypto_sign_ed25519_pk_to_curve25519(alice.publicKey);
-      const bob1X25519Pub = crypto_sign_ed25519_pk_to_curve25519(bob1.publicKey);
-      const bob1X25519Priv = crypto_sign_ed25519_sk_to_curve25519(bob1.privateKey);
-      const bob2X25519Pub = crypto_sign_ed25519_pk_to_curve25519(bob2.publicKey);
-      const bob2X25519Priv = crypto_sign_ed25519_sk_to_curve25519(bob2.privateKey);
+      const aliceX25519Pub = crypto_sign_ed25519_pk_to_curve25519(
+        alice.publicKey,
+      );
+      const bob1X25519Pub = crypto_sign_ed25519_pk_to_curve25519(
+        bob1.publicKey,
+      );
+      const bob1X25519Priv = crypto_sign_ed25519_sk_to_curve25519(
+        bob1.privateKey,
+      );
+      const bob2X25519Pub = crypto_sign_ed25519_pk_to_curve25519(
+        bob2.publicKey,
+      );
+      const bob2X25519Priv = crypto_sign_ed25519_sk_to_curve25519(
+        bob2.privateKey,
+      );
 
-      const session1 = crypto_kx_server_session_keys(bob1X25519Pub, bob1X25519Priv, aliceX25519Pub);
-      const session2 = crypto_kx_server_session_keys(bob2X25519Pub, bob2X25519Priv, aliceX25519Pub);
+      const session1 = crypto_kx_server_session_keys(
+        bob1X25519Pub,
+        bob1X25519Priv,
+        aliceX25519Pub,
+      );
+      const session2 = crypto_kx_server_session_keys(
+        bob2X25519Pub,
+        bob2X25519Priv,
+        aliceX25519Pub,
+      );
 
       expect(session1.sharedRx).not.toEqual(session2.sharedRx);
       expect(session1.sharedTx).not.toEqual(session2.sharedTx);
@@ -261,12 +303,24 @@ describe("Sumo Facade Functionality", () => {
 
     it("should handle identical client and server keys gracefully", () => {
       const sameKey = crypto_sign_keypair();
-      const sameX25519Pub = crypto_sign_ed25519_pk_to_curve25519(sameKey.publicKey);
-      const sameX25519Priv = crypto_sign_ed25519_sk_to_curve25519(sameKey.privateKey);
+      const sameX25519Pub = crypto_sign_ed25519_pk_to_curve25519(
+        sameKey.publicKey,
+      );
+      const sameX25519Priv = crypto_sign_ed25519_sk_to_curve25519(
+        sameKey.privateKey,
+      );
 
       // Using the same key for both client and server should work but produce different RX/TX
-      const clientSession = crypto_kx_client_session_keys(sameX25519Pub, sameX25519Priv, sameX25519Pub);
-      const serverSession = crypto_kx_server_session_keys(sameX25519Pub, sameX25519Priv, sameX25519Pub);
+      const clientSession = crypto_kx_client_session_keys(
+        sameX25519Pub,
+        sameX25519Priv,
+        sameX25519Pub,
+      );
+      const serverSession = crypto_kx_server_session_keys(
+        sameX25519Pub,
+        sameX25519Priv,
+        sameX25519Pub,
+      );
 
       expect(clientSession.sharedRx).toEqual(serverSession.sharedTx);
       expect(clientSession.sharedTx).toEqual(serverSession.sharedRx);
@@ -278,12 +332,24 @@ describe("Sumo Facade Functionality", () => {
       const alice = crypto_sign_keypair();
       const bob = crypto_sign_keypair();
 
-      const aliceX25519Pub = crypto_sign_ed25519_pk_to_curve25519(alice.publicKey);
-      const aliceX25519Priv = crypto_sign_ed25519_sk_to_curve25519(alice.privateKey);
+      const aliceX25519Pub = crypto_sign_ed25519_pk_to_curve25519(
+        alice.publicKey,
+      );
+      const aliceX25519Priv = crypto_sign_ed25519_sk_to_curve25519(
+        alice.privateKey,
+      );
       const bobX25519Pub = crypto_sign_ed25519_pk_to_curve25519(bob.publicKey);
 
-      const session1 = crypto_kx_client_session_keys(aliceX25519Pub, aliceX25519Priv, bobX25519Pub);
-      const session2 = crypto_kx_client_session_keys(aliceX25519Pub, aliceX25519Priv, bobX25519Pub);
+      const session1 = crypto_kx_client_session_keys(
+        aliceX25519Pub,
+        aliceX25519Priv,
+        bobX25519Pub,
+      );
+      const session2 = crypto_kx_client_session_keys(
+        aliceX25519Pub,
+        aliceX25519Priv,
+        bobX25519Pub,
+      );
 
       expect(session1.sharedRx).toEqual(session2.sharedRx);
       expect(session1.sharedTx).toEqual(session2.sharedTx);
@@ -429,7 +495,7 @@ describe("Sumo Facade Functionality", () => {
 
       // Corrupt the first byte
       const corruptedCiphertext = new Uint8Array(ciphertext);
-      corruptedCiphertext[0] ^= 0xFF;
+      corruptedCiphertext[0] ^= 0xff;
 
       expect(() => {
         crypto_secretbox_open_easy(corruptedCiphertext, nonce, key);
@@ -486,7 +552,11 @@ describe("Sumo Facade Functionality", () => {
       const validSignature = new Uint8Array(64).fill(0x01);
 
       // Test input validation
-      const result = crypto_sign_verify_detached(validSignature, message, keyPair.publicKey);
+      const result = crypto_sign_verify_detached(
+        validSignature,
+        message,
+        keyPair.publicKey,
+      );
       expect(typeof result).toBe("boolean");
     });
 
@@ -496,8 +566,16 @@ describe("Sumo Facade Functionality", () => {
       const shortSignature = new Uint8Array(63); // Invalid length
       const longSignature = new Uint8Array(65); // Invalid length
 
-      const result1 = crypto_sign_verify_detached(shortSignature, message, keyPair.publicKey);
-      const result2 = crypto_sign_verify_detached(longSignature, message, keyPair.publicKey);
+      const result1 = crypto_sign_verify_detached(
+        shortSignature,
+        message,
+        keyPair.publicKey,
+      );
+      const result2 = crypto_sign_verify_detached(
+        longSignature,
+        message,
+        keyPair.publicKey,
+      );
 
       expect(result1).toBe(false);
       expect(result2).toBe(false);
@@ -509,8 +587,16 @@ describe("Sumo Facade Functionality", () => {
       const shortPublicKey = new Uint8Array(31); // Invalid length
       const longPublicKey = new Uint8Array(33); // Invalid length
 
-      const result1 = crypto_sign_verify_detached(validSignature, message, shortPublicKey);
-      const result2 = crypto_sign_verify_detached(validSignature, message, longPublicKey);
+      const result1 = crypto_sign_verify_detached(
+        validSignature,
+        message,
+        shortPublicKey,
+      );
+      const result2 = crypto_sign_verify_detached(
+        validSignature,
+        message,
+        longPublicKey,
+      );
 
       expect(result1).toBe(false);
       expect(result2).toBe(false);
@@ -521,25 +607,37 @@ describe("Sumo Facade Functionality", () => {
       const emptyMessage = new Uint8Array(0);
       const signature = new Uint8Array(64);
 
-      const result = crypto_sign_verify_detached(signature, emptyMessage, keyPair.publicKey);
+      const result = crypto_sign_verify_detached(
+        signature,
+        emptyMessage,
+        keyPair.publicKey,
+      );
       expect(typeof result).toBe("boolean");
     });
 
     it("should handle large messages", () => {
       const keyPair = crypto_sign_keypair();
-      const largeMessage = new Uint8Array(100000).fill(0xAA);
+      const largeMessage = new Uint8Array(100000).fill(0xaa);
       const signature = new Uint8Array(64);
 
-      const result = crypto_sign_verify_detached(signature, largeMessage, keyPair.publicKey);
+      const result = crypto_sign_verify_detached(
+        signature,
+        largeMessage,
+        keyPair.publicKey,
+      );
       expect(typeof result).toBe("boolean");
     });
 
     it("should handle malformed signatures gracefully", () => {
       const keyPair = crypto_sign_keypair();
       const message = new Uint8Array([1, 2, 3]);
-      const malformedSignature = new Uint8Array(64).fill(0xFF); // All 0xFF bytes
+      const malformedSignature = new Uint8Array(64).fill(0xff); // All 0xFF bytes
 
-      const result = crypto_sign_verify_detached(malformedSignature, message, keyPair.publicKey);
+      const result = crypto_sign_verify_detached(
+        malformedSignature,
+        message,
+        keyPair.publicKey,
+      );
       expect(result).toBe(false);
     });
   });
@@ -658,7 +756,7 @@ describe("Sumo Facade Functionality", () => {
     });
 
     it("should handle large data", () => {
-      const largeData = new Uint8Array(10000).fill(0xAA);
+      const largeData = new Uint8Array(10000).fill(0xaa);
       const result = to_base64(largeData);
 
       expect(typeof result).toBe("string");
@@ -683,7 +781,7 @@ describe("Sumo Facade Functionality", () => {
     });
 
     it("should handle point addition with invalid points", () => {
-      const invalidPoint = new Uint8Array(32).fill(0xFF); // Likely invalid point
+      const invalidPoint = new Uint8Array(32).fill(0xff); // Likely invalid point
       const validScalar = new Uint8Array(32);
       validScalar[0] = 1;
       const validPoint = crypto_scalarmult_ed25519_base_noclamp(validScalar);
@@ -717,7 +815,7 @@ describe("Sumo Facade Functionality", () => {
 
   describe("Ed25519 Scalar Operations - Advanced", () => {
     it("should handle scalar addition edge cases", () => {
-      const maxScalar = new Uint8Array(32).fill(0xFF);
+      const maxScalar = new Uint8Array(32).fill(0xff);
       const oneScalar = new Uint8Array(32);
       oneScalar[0] = 1;
 
@@ -775,19 +873,19 @@ describe("Sumo Facade Functionality", () => {
 
     it("should handle scalar reduction of various sizes", () => {
       // Test with different input sizes
-      const smallInput = new Uint8Array(16).fill(0xFF);
+      const smallInput = new Uint8Array(16).fill(0xff);
       const result1 = crypto_core_ed25519_scalar_reduce(smallInput);
       expect(result1.length).toBe(32);
 
-      const normalInput = new Uint8Array(32).fill(0xFF);
+      const normalInput = new Uint8Array(32).fill(0xff);
       const result2 = crypto_core_ed25519_scalar_reduce(normalInput);
       expect(result2.length).toBe(32);
 
-      const largeInput = new Uint8Array(64).fill(0xFF);
+      const largeInput = new Uint8Array(64).fill(0xff);
       const result3 = crypto_core_ed25519_scalar_reduce(largeInput);
       expect(result3.length).toBe(32);
 
-      const veryLargeInput = new Uint8Array(128).fill(0xFF);
+      const veryLargeInput = new Uint8Array(128).fill(0xff);
       const result4 = crypto_core_ed25519_scalar_reduce(veryLargeInput);
       expect(result4.length).toBe(32);
     });
@@ -853,7 +951,7 @@ describe("Sumo Facade Functionality", () => {
     });
 
     it("should handle very large messages with keys", () => {
-      const largeMessage = new Uint8Array(500000).fill(0xCC); // 500KB
+      const largeMessage = new Uint8Array(500000).fill(0xcc); // 500KB
       const key = new Uint8Array(32).fill(0x99);
 
       const hash = crypto_generichash(48, largeMessage, key);
@@ -945,8 +1043,16 @@ describe("libsodium-wrappers-sumo parity", () => {
     const signature = sodium.crypto_sign_detached(message, keyPair.privateKey);
 
     // Test both implementations
-    const result1 = crypto_sign_verify_detached(signature, message, keyPair.publicKey);
-    const result2 = sodium.crypto_sign_verify_detached(signature, message, keyPair.publicKey);
+    const result1 = crypto_sign_verify_detached(
+      signature,
+      message,
+      keyPair.publicKey,
+    );
+    const result2 = sodium.crypto_sign_verify_detached(
+      signature,
+      message,
+      keyPair.publicKey,
+    );
 
     expect(result1).toEqual(result2);
     expect(result1).toBe(true);
@@ -1060,7 +1166,9 @@ describe("libsodium-wrappers-sumo parity", () => {
     const edKeyPair = sodium.crypto_sign_keypair();
 
     const result1 = crypto_sign_ed25519_pk_to_curve25519(edKeyPair.publicKey);
-    const result2 = sodium.crypto_sign_ed25519_pk_to_curve25519(edKeyPair.publicKey);
+    const result2 = sodium.crypto_sign_ed25519_pk_to_curve25519(
+      edKeyPair.publicKey,
+    );
 
     expect(result1).toEqual(result2);
   });
@@ -1072,7 +1180,9 @@ describe("libsodium-wrappers-sumo parity", () => {
     const edKeyPair = sodium.crypto_sign_keypair();
 
     const result1 = crypto_sign_ed25519_sk_to_curve25519(edKeyPair.privateKey);
-    const result2 = sodium.crypto_sign_ed25519_sk_to_curve25519(edKeyPair.privateKey);
+    const result2 = sodium.crypto_sign_ed25519_sk_to_curve25519(
+      edKeyPair.privateKey,
+    );
 
     expect(result1).toEqual(result2);
   });
@@ -1120,12 +1230,12 @@ describe("libsodium-wrappers-sumo parity", () => {
     const result1 = crypto_kx_client_session_keys(
       clientKeyPair.publicKey,
       clientKeyPair.privateKey,
-      serverKeyPair.publicKey
+      serverKeyPair.publicKey,
     );
     const result2 = sodium.crypto_kx_client_session_keys(
       clientKeyPair.publicKey,
       clientKeyPair.privateKey,
-      serverKeyPair.publicKey
+      serverKeyPair.publicKey,
     );
 
     expect(result1.sharedRx).toEqual(result2.sharedRx);
@@ -1142,12 +1252,12 @@ describe("libsodium-wrappers-sumo parity", () => {
     const result1 = crypto_kx_server_session_keys(
       serverKeyPair.publicKey,
       serverKeyPair.privateKey,
-      clientKeyPair.publicKey
+      clientKeyPair.publicKey,
     );
     const result2 = sodium.crypto_kx_server_session_keys(
       serverKeyPair.publicKey,
       serverKeyPair.privateKey,
-      clientKeyPair.publicKey
+      clientKeyPair.publicKey,
     );
 
     expect(result1.sharedRx).toEqual(result2.sharedRx);
