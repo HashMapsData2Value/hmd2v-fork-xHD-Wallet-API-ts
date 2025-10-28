@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/HashMapsData2Value/hmd2v-xHD-Wallet-API-ts/compare/v1.0.1...v1.1.0) (2025-10-28)
+
+
+### Features
+
+* replace crypto with noble/hashes ([063fda9](https://github.com/HashMapsData2Value/hmd2v-xHD-Wallet-API-ts/commit/063fda92f5cddbb86b58ffbe18e8641f092b7c9a))
+
 ## [1.0.1](https://github.com/HashMapsData2Value/hmd2v-xHD-Wallet-API-ts/compare/v1.0.0...v1.0.1) (2025-10-28)
 
 
