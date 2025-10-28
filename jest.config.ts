@@ -1,6 +1,4 @@
-import type { JestConfigWithTsJest } from 'ts-jest';
-
-const jestConfig: JestConfigWithTsJest = {
+module.exports = {
     preset: 'ts-jest/presets/default-esm',
     testPathIgnorePatterns: ["src"],
     extensionsToTreatAsEsm: ['.ts'],
@@ -10,5 +8,3 @@ const jestConfig: JestConfigWithTsJest = {
         }
     }
 };
-
-export default jestConfig;

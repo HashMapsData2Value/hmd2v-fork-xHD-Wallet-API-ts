@@ -1,19 +1,9 @@
-// Converts a hex string to a Uint8Array
-export function hexToUint8Array(hex: string): Uint8Array {
-  if (hex.length % 2 !== 0) throw new Error('Hex string must have even length');
-  const arr = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < hex.length; i += 2) {
-    arr[i / 2] = parseInt(hex.slice(i, i + 2), 16);
-  }
-  return arr;
-}
 import { xsalsa20poly1305 } from "@noble/ciphers/salsa.js";
 import { mod } from "@noble/curves/abstract/modular.js";
 import { ed25519, x25519 } from "@noble/curves/ed25519.js";
 import { bytesToNumberLE, numberToBytesLE } from "@noble/curves/utils.js";
 import { blake2b } from "@noble/hashes/blake2.js";
 import { sha512 } from "@noble/hashes/sha2.js";
-import { stringToUint8Array, uint8ArrayToBase64 } from './utils.js';
 
 // ===========================
 // Libsodium Type Definitions
@@ -380,42 +370,11 @@ export function crypto_secretbox_open_easy(
 export function to_base64(data: Uint8Array | string): string {
   let base64: string;
   if (typeof data === "string") {
-    base64 = uint8ArrayToBase64(stringToUint8Array(data, 'utf8'));
+    base64 = Buffer.from(data, "utf8").toString("base64");
   } else {
-    base64 = uint8ArrayToBase64(data);
+    base64 = Buffer.from(data).toString("base64");
   }
 
   // Remove padding to match libsodium's to_base64 behavior
   return base64.replace(/=+$/, "");
 }
-export { stringToUint8Array, uint8ArrayToBase64 };
-
-// Converts a base64 string to a Uint8Array
-export function base64ToUint8Array(base64: string): Uint8Array {
-  if (typeof Buffer !== 'undefined') {
-    // Node.js
-    return new Uint8Array(Buffer.from(base64, 'base64'));
-  } else {
-    // Browser/React Native
-    const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes;
-  }
-}
-
-// Concatenates multiple Uint8Arrays into one
-export function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
-  let totalLength = arrays.reduce((acc, value) => acc + value.length, 0);
-  let result = new Uint8Array(totalLength);
-  let offset = 0;
-  for (const arr of arrays) {
-    result.set(arr, offset);
-    offset += arr.length;
-  }
-  return result;
-}
-// (Removed duplicate export statement for base64ToUint8Array and concatUint8Arrays)

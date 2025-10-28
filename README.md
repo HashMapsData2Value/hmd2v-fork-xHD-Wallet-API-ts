@@ -11,20 +11,6 @@ Typescript implementation of BIP32-Ed25519 Hierarchical Deterministic Keys over 
 yarn add @algorandfoundation/xhd-wallet-api
 ```
 
-### React Native
-For React Native, install required polyfills:
-
-```bash
-yarn add react-native-bigint react-native-get-random-values
-```
-At the top of your app:
-```js
-import '@algorandfoundation/xhd-wallet-api/polyfills';
-```
-See [REACT_NATIVE.md](./REACT_NATIVE.md) for full details.
-
----
-
 ## Usage
 
 ### 1. Initialize
@@ -36,9 +22,30 @@ const cryptoService = new XHDWalletAPI();
 const seed = getSeed(); // Your secure seed-retrieval API
 const rootKey = cryptoService.fromSeed(seed);
 seed.fill(0); // Zero out the seed after it has been used
+
 // ... use rootKey
 rootKey.fill(0); // Zero out the rootKey after it has been used
 ```
+
+### Buffer for Binary Operations
+
+This library uses Buffer for all binary operations (concatenation, encoding, base64, etc.) in both Node.js and React Native. The Buffer API is available everywhere via the [buffer](https://www.npmjs.com/package/buffer) polyfill.
+
+You can use Buffer just as you would in Node.js:
+
+```js
+// Concatenate binary data
+const result = Buffer.concat([Buffer.from(a), Buffer.from(b)]);
+
+// Convert to string
+const str = Buffer.from(a).toString('utf8');
+
+// Base64 encode/decode
+const base64 = Buffer.from(a).toString('base64');
+const bytes = Buffer.from(base64, 'base64');
+```
+
+All cryptographic APIs still use Uint8Array for compatibility, but you can always convert between Buffer and Uint8Array using Buffer.from().
 
 ### 2. Generate Public Key (BIP44 path)
 

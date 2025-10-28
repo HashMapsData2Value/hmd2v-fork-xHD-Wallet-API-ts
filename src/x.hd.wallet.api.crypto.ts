@@ -11,7 +11,6 @@ import {
 } from './sumo.facade.js';
 import * as msgpack from "algo-msgpack-with-bigint"
 import Ajv from "ajv"
-import { concatUint8Arrays, stringToUint8Array, uint8ArrayToString, base64ToUint8Array } from './utils.js';
 //@ts-expect-error, we handle this with ts-alias
 import { deriveChildNodePrivate } from './bip32-ed25519';
 
@@ -88,7 +87,7 @@ export class XHDWalletAPI {
 
         // extended public key
         // [public] [nodeCC]
-        return concatUint8Arrays([crypto_scalarmult_ed25519_base_noclamp(rootKey.subarray(0, 32)), rootKey.subarray(64, 96)])
+        return new Uint8Array(Buffer.concat([crypto_scalarmult_ed25519_base_noclamp(rootKey.subarray(0, 32)), rootKey.subarray(64, 96)]))
     }
 
     /**
@@ -131,18 +130,18 @@ export class XHDWalletAPI {
         const publicKey = crypto_scalarmult_ed25519_base_noclamp(scalar);
 
         // \(2): h = hash(c || msg) mod q
-        const r = crypto_core_ed25519_scalar_reduce(crypto_hash_sha512(concatUint8Arrays([kR, data])))
+        const r = crypto_core_ed25519_scalar_reduce(crypto_hash_sha512(Buffer.concat([kR, data])))
 
         // \(4):  R = r * G (base point, no clamp)
         const R = crypto_scalarmult_ed25519_base_noclamp(r)
 
         // h = hash(R || pubKey || msg) mod q
-        let h = crypto_core_ed25519_scalar_reduce(crypto_hash_sha512(concatUint8Arrays([R, publicKey, data])));
+        let h = crypto_core_ed25519_scalar_reduce(crypto_hash_sha512(Buffer.concat([R, publicKey, data])));
 
         // \(5): S = (r + h * k) mod q
         const S = crypto_core_ed25519_scalar_add(r, crypto_core_ed25519_scalar_mul(h, scalar))
 
-        return concatUint8Arrays([R, S]);
+        return Buffer.concat([R, S]);
     }
 
     /**
@@ -219,7 +218,7 @@ export class XHDWalletAPI {
         let decoded: Uint8Array
         switch (metadata.encoding) {
             case Encoding.BASE64:
-                decoded = base64ToUint8Array(uint8ArrayToString(message))
+                decoded = new Uint8Array(Buffer.from(Buffer.from(message).toString(), 'base64'))
                 break
             case Encoding.MSGPACK:
                 decoded = msgpack.decode<Uint8Array>(message) as Uint8Array
@@ -239,9 +238,7 @@ export class XHDWalletAPI {
 
         const valid = validate(decoded)
 
-        if (!valid && ajv.errors) {
-            console.log('Validation errors:', ajv.errors)
-        }
+        if (!valid) console.log(ajv.errors)
 
         return valid
     }
@@ -263,7 +260,7 @@ export class XHDWalletAPI {
             "SpecialAddr", "STIB", "spc", "spm", "spp", "sps", "spv", "TE", "TG", "TL", "TX", "VO"
         ]
         for (const prefix of prefixes) {
-            if (uint8ArrayToString(message.subarray(0, prefix.length), 'ascii') === prefix) {
+            if (Buffer.from(message.subarray(0, prefix.length)).toString("ascii") === prefix) {
                 return true
             }
         }
@@ -320,9 +317,9 @@ export class XHDWalletAPI {
 
         let concatenation: Uint8Array
         if (meFirst) {
-            concatenation = concatUint8Arrays([sharedPoint, ourPubCurve25519, otherPartyPubCurve25519])
+            concatenation = Buffer.concat([sharedPoint, ourPubCurve25519, otherPartyPubCurve25519])
         } else {
-            concatenation = concatUint8Arrays([sharedPoint, otherPartyPubCurve25519, ourPubCurve25519])
+            concatenation = Buffer.concat([sharedPoint, otherPartyPubCurve25519, ourPubCurve25519])
 
         }
 
