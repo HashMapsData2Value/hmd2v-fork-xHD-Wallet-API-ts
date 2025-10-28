@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/HashMapsData2Value/hmd2v-xHD-Wallet-API-ts/compare/v1.1.0...v1.2.0) (2025-10-28)
+
+
+### Features
+
+* create both CJS and ESM ([ff4ff35](https://github.com/HashMapsData2Value/hmd2v-xHD-Wallet-API-ts/commit/ff4ff356056ca2558662b74386e1b94f88f56d85))
+
 # [1.1.0](https://github.com/HashMapsData2Value/hmd2v-xHD-Wallet-API-ts/compare/v1.0.1...v1.1.0) (2025-10-28)
 
 
