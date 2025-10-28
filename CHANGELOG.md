@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/HashMapsData2Value/hmd2v-xHD-Wallet-API-ts/compare/v1.0.0...v1.0.1) (2025-10-28)
+
+
+### Bug Fixes
+
+* return Buffer ([b0436bc](https://github.com/HashMapsData2Value/hmd2v-xHD-Wallet-API-ts/commit/b0436bc36be913f3604a54ae1ebc23ecf804304b))
+
 # 1.0.0 (2025-10-17)
 
 
