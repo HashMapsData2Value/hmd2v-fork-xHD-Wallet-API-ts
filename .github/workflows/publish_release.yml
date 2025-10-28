@@ -46,7 +46,7 @@ jobs:
         run: corepack yarn build
 
       - name: "Semantic release"
-        run: npx semantic-release
+        run: corepack yarn semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
