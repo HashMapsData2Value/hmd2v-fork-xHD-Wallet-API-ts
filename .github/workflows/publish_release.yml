@@ -34,11 +34,16 @@ jobs:
         with:
           node-version: 20.x
 
+
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
-        run: npm install
+        run: corepack yarn install
+
 
       - name: "Build"
-        run: npm run build
+        run: corepack yarn build
 
       - name: "Semantic release"
         run: npx semantic-release

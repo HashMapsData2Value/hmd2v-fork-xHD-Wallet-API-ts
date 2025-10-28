@@ -20,17 +20,18 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Yarn
-        run: npm install -g yarn
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
-        run: yarn install
+        run: corepack yarn install
 
       - name: Compile TypeScript
-        run: yarn tsc
+        run: corepack yarn tsc
 
       - name: Run Jest tests
-        run: yarn test
+        run: corepack yarn test
 
-      - name: Run Jest tests
-        run: yarn build
+      - name: Build
+        run: corepack yarn build
